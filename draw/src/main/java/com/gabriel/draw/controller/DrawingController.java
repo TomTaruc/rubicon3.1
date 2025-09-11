@@ -19,7 +19,7 @@ public class DrawingController  implements MouseListener, MouseMotionListener {
     final private DrawingView drawingView;
 
     Shape currentShape;
-    AppService appService;
+    private final AppService appService;
      public DrawingController(AppService appService, DrawingView drawingView){
        this.appService = appService;
          this.drawingView = drawingView;
@@ -38,16 +38,27 @@ public class DrawingController  implements MouseListener, MouseMotionListener {
             start = e.getPoint();
             switch (appService.getShapeMode()){
                 case Line:  currentShape = new Line(start, start);
+                    currentShape.setColor(appService.getColor());
+                    currentShape.getRendererService().render(drawingView.getGraphics(), currentShape,false );
+                    appService.setDrawMode(DrawMode.MousePressed);
                     break;
                 case Rectangle:
                     currentShape = new Rectangle(start, start);
+                    currentShape.setColor(appService.getColor());
+                    currentShape.getRendererService().render(drawingView.getGraphics(), currentShape,false );
+                    appService.setDrawMode(DrawMode.MousePressed);
                     break;
                 case  Ellipse:
                     currentShape = new Ellipse(start, start);
+                    currentShape.setColor(appService.getColor());
+                    currentShape.getRendererService().render(drawingView.getGraphics(), currentShape,false );
+                    appService.setDrawMode(DrawMode.MousePressed);
                     break;
+                default:
+                    return;
             }
-            currentShape.getRendererService().render(drawingView.getGraphics(), currentShape,false );
-            appService.setDrawMode(DrawMode.MousePressed);
+
+
         }
     }
 
@@ -55,6 +66,9 @@ public class DrawingController  implements MouseListener, MouseMotionListener {
     public void mouseReleased(MouseEvent e) {
          if(appService.getDrawMode() == DrawMode.MousePressed){
              end = e.getPoint();
+             currentShape.getRendererService().render(drawingView.getGraphics(), currentShape,true );
+             appService.scale(currentShape,end);
+             currentShape.getRendererService().render(drawingView.getGraphics(), currentShape,false );
              appService.create(currentShape);
              appService.setDrawMode(DrawMode.Idle);
            }
