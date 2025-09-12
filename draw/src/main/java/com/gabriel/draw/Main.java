@@ -12,32 +12,49 @@ import com.gabriel.drawfx.service.AppService;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        AppService drawingAppService = new DrawingAppService();
-        AppService appService = new DeawingCommandAppService(drawingAppService);
+        // Set system look and feel
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeel());
+        } catch (Exception e) {
+            // Fall back to default look and feel
+        }
+        
+        SwingUtilities.invokeLater(() -> {
+            // Create services
+            AppService drawingAppService = new DrawingAppService();
+            AppService appService = new DeawingCommandAppService(drawingAppService);
 
-        DrawingFrame drawingFrame = new DrawingFrame(appService);
-        ActionListener actionListener = new ActionController(appService);
-        DrawingMenuBar drawingMenuBar = new DrawingMenuBar( actionListener);
-        DrawingToolBar drawingToolBar = new DrawingToolBar(actionListener);
-        DrawingView drawingView = new DrawingView(appService);
-        DrawingController drawingController = new DrawingController(appService, drawingView);
-        drawingView.addMouseMotionListener(drawingController);
-        drawingView.addMouseListener(drawingController);
-        drawingFrame.setContentPane(drawingView);
+            // Create shared action controller
+            ActionController actionController = new ActionController(appService);
 
+            // Create UI components
+            DrawingFrame drawingFrame = new DrawingFrame(appService);
+            DrawingMenuBar drawingMenuBar = new DrawingMenuBar(actionController);
+            DrawingToolBar drawingToolBar = new DrawingToolBar(actionController);
+            DrawingView drawingView = new DrawingView(appService);
+            
+            // Create drawing controller with action controller reference
+            DrawingController drawingController = new DrawingController(appService, drawingView, actionController);
 
-        drawingMenuBar.setVisible(true);
-        drawingFrame.setJMenuBar(drawingMenuBar);
-        drawingFrame.getContentPane().add(drawingToolBar, BorderLayout.PAGE_START);
+            // Setup frame
+            drawingFrame.setContentPane(drawingView);
+            drawingFrame.setJMenuBar(drawingMenuBar);
+            drawingFrame.getContentPane().add(drawingToolBar, BorderLayout.PAGE_START);
 
-        drawingFrame.setVisible(true);
-        drawingFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        drawingFrame.setSize(500,500);
+            // Configure frame
+            drawingFrame.setTitle("Drawing Application - Create shapes with mouse or Shift+Click");
+            drawingFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            drawingFrame.setSize(1000, 700);
+            drawingFrame.setLocationRelativeTo(null); // Center on screen
+            
+            // Initial UI state update
+            actionController.updateUIState();
+            
+            // Show frame
+            drawingFrame.setVisible(true);
+        });
     }
 }
