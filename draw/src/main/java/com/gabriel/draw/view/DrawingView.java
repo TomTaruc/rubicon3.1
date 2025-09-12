@@ -9,12 +9,16 @@ import java.awt.*;
 
 public class DrawingView extends JPanel {
     private final AppService appService;
+    private Shape previewShape; // Shape being drawn in real-time
 
     public DrawingView(AppService appService) {
         this.appService = appService;
         appService.setView(this);
         setBackground(Color.WHITE);
         setPreferredSize(new Dimension(800, 600));
+        
+        // Enable keyboard focus for shortcuts
+        setFocusable(true);
         
         // Enable tooltips for this component
         ToolTipManager.sharedInstance().registerComponent(this);
@@ -39,10 +43,25 @@ public class DrawingView extends JPanel {
                 }
             }
         }
+        
+        // Draw preview shape during dragging
+        if (previewShape != null && previewShape.getRendererService() != null) {
+            previewShape.getRendererService().render(g, previewShape, false);
+        }
     }
     
     @Override
     public void paint(Graphics g) {
         paintComponent(g);
+    }
+    
+    public void setPreviewShape(Shape shape) {
+        this.previewShape = shape;
+        repaint(); // Trigger a redraw
+    }
+    
+    public void clearPreviewShape() {
+        this.previewShape = null;
+        repaint(); // Trigger a redraw
     }
 }

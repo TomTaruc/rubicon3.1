@@ -12,6 +12,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import javax.swing.SwingUtilities;
 
 public class DrawingController implements MouseListener, MouseMotionListener {
     private Point startPoint;
@@ -80,7 +81,7 @@ public class DrawingController implements MouseListener, MouseMotionListener {
             }
             
             currentShape.setColor(appService.getColor());
-            currentShape.getRendererService().render(drawingView.getGraphics(), currentShape, false);
+            drawingView.setPreviewShape(currentShape);
             appService.setDrawMode(DrawMode.MousePressed);
         }
     }
@@ -90,8 +91,8 @@ public class DrawingController implements MouseListener, MouseMotionListener {
         if (appService.getDrawMode() == DrawMode.MousePressed && !e.isShiftDown()) {
             endPoint = e.getPoint();
             
-            // Clear the temporary shape
-            currentShape.getRendererService().render(drawingView.getGraphics(), currentShape, true);
+            // Clear the preview shape
+            drawingView.clearPreviewShape();
             
             // Update shape with final coordinates
             appService.scale(currentShape, endPoint);
@@ -100,8 +101,11 @@ public class DrawingController implements MouseListener, MouseMotionListener {
             appService.create(currentShape);
             appService.setDrawMode(DrawMode.Idle);
             
-            // Update UI state
-            actionController.updateUIState();
+            // Update UI state - force focus to ensure keyboard shortcuts work
+            SwingUtilities.invokeLater(() -> {
+                drawingView.requestFocusInWindow();
+                actionController.updateUIState();
+            });
         }
     }
 
@@ -121,12 +125,9 @@ public class DrawingController implements MouseListener, MouseMotionListener {
         if (appService.getDrawMode() == DrawMode.MousePressed && !e.isShiftDown()) {
             endPoint = e.getPoint();
             
-            // Clear previous temporary shape
-            currentShape.getRendererService().render(drawingView.getGraphics(), currentShape, true);
-            
-            // Update and draw new temporary shape
+            // Update shape dimensions and show preview
             appService.scale(currentShape, endPoint);
-            currentShape.getRendererService().render(drawingView.getGraphics(), currentShape, true);
+            drawingView.setPreviewShape(currentShape);
             
             // Update status information
             updateStatusInfo();

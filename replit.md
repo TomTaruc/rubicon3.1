@@ -4,17 +4,21 @@
 This is a Java Swing-based drawing application that allows users to create shapes (lines, rectangles, ellipses) with mouse interactions. The application features undo/redo functionality and shape management capabilities.
 
 ## Recent Changes (September 12, 2025)
-Fixed critical functionality issues with undo/redo and clear all buttons:
+Fixed all critical functionality issues with UI interactions and drawing preview:
 
 ### Issues Resolved
-1. **Undo/Redo Double-Click Issue**: Fixed buttons requiring multiple clicks before responding
-2. **Button State Management**: Undo/redo buttons now properly disable when no actions are available
-3. **Clear All Functionality**: Fixed non-functional clear all button
+1. **Undo/Redo Single-Click Fix**: Undo (Ctrl+Z) and Redo (Ctrl+Shift+Z) now work on first press
+2. **Real-Time Drawing Preview**: Shapes now show while drawing/dragging, not just when finished
+3. **Button State Management**: Undo/redo buttons properly disable when no actions are available
+4. **Clear All Functionality**: Fixed non-functional clear all button
 
 ### Technical Fixes Applied
-- Updated ActionController.canUndo()/canRedo() methods to use actual command service instead of placeholders
-- Added clearAll() method to AppService interface and implemented in DeawingCommandAppService
-- Fixed clear all action to properly clear shapes after user confirmation
+- **Drawing Preview**: Implemented proper Swing preview system in DrawingView with setPreviewShape/clearPreviewShape methods
+- **Mouse Events**: Updated DrawingController to use repaint-based rendering instead of direct graphics
+- **Focus Management**: Enhanced keyboard shortcut handling with proper focus management
+- **UI State Updates**: Improved undo/redo timing with SwingUtilities.invokeLater for immediate response
+- **ActionController**: Fixed undo/redo methods to use actual command service instead of placeholders
+- **Clear All**: Added @Override annotation to clearAll() method in DrawingAppService
 
 ## Project Architecture
 - **Root Module**: `rubicon` - Multi-module Maven project
@@ -36,5 +40,7 @@ Fixed critical functionality issues with undo/redo and clear all buttons:
 ## Current Status
 ✅ Application running successfully
 ✅ All user interface issues resolved
-✅ Undo/redo working with single clicks
+✅ Undo/redo working with single clicks (Ctrl+Z / Ctrl+Shift+Z)
+✅ Real-time drawing preview while dragging shapes
 ✅ Clear all functionality operational
+✅ Proper focus management for keyboard shortcuts
