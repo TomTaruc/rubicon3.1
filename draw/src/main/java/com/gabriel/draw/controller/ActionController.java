@@ -113,13 +113,9 @@ public class ActionController implements ActionListener {
         switch (cmd) {
             case ActionCommand.UNDO:
                 appService.undo();
-                // Force immediate UI update and repaint
-                SwingUtilities.invokeLater(this::updateUIState);
                 break;
             case ActionCommand.REDO:
                 appService.redo();
-                // Force immediate UI update and repaint
-                SwingUtilities.invokeLater(this::updateUIState);
                 break;
             case ActionCommand.LINE:
                 appService.setShapeMode(ShapeMode.Line);

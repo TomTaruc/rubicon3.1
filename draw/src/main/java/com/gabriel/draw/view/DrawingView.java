@@ -50,10 +50,6 @@ public class DrawingView extends JPanel {
         }
     }
     
-    @Override
-    public void paint(Graphics g) {
-        paintComponent(g);
-    }
     
     public void setPreviewShape(Shape shape) {
         this.previewShape = shape;

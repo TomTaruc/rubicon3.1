@@ -48,8 +48,8 @@ public class DeawingCommandAppService implements AppService {
 
     @Override
     public void setDrawMode(DrawMode drawMode) {
-        Command command = new SetDrawModeCommand(appService, drawMode);
-        CommandService.ExecuteCommand(command);
+        // Don't make draw mode changes undoable - call directly
+        appService.setDrawMode(drawMode);
     }
 
     @Override

@@ -101,11 +101,8 @@ public class DrawingController implements MouseListener, MouseMotionListener {
             appService.create(currentShape);
             appService.setDrawMode(DrawMode.Idle);
             
-            // Update UI state - force focus to ensure keyboard shortcuts work
-            SwingUtilities.invokeLater(() -> {
-                drawingView.requestFocusInWindow();
-                actionController.updateUIState();
-            });
+            // Update UI state
+            actionController.updateUIState();
         }
     }
 
@@ -128,9 +125,6 @@ public class DrawingController implements MouseListener, MouseMotionListener {
             // Update shape dimensions and show preview
             appService.scale(currentShape, endPoint);
             drawingView.setPreviewShape(currentShape);
-            
-            // Update status information
-            updateStatusInfo();
         }
     }
 
