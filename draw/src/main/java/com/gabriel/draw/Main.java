@@ -21,7 +21,7 @@ public class Main {
         } catch (Exception e) {
             // Fall back to default look and feel
         }
-        
+
         SwingUtilities.invokeLater(() -> {
             // Create services
             AppService drawingAppService = new DrawingAppService();
@@ -35,7 +35,7 @@ public class Main {
             DrawingMenuBar drawingMenuBar = new DrawingMenuBar(actionController);
             DrawingToolBar drawingToolBar = new DrawingToolBar(actionController);
             DrawingView drawingView = new DrawingView(appService);
-            
+
             // Create drawing controller with action controller reference
             DrawingController drawingController = new DrawingController(appService, drawingView, actionController);
 
@@ -49,10 +49,10 @@ public class Main {
             drawingFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             drawingFrame.setSize(1000, 700);
             drawingFrame.setLocationRelativeTo(null); // Center on screen
-            
+
             // Initial UI state update
             actionController.updateUIState();
-            
+
             // Show frame
             drawingFrame.setVisible(true);
         });
