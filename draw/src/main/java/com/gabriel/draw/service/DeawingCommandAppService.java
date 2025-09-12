@@ -94,6 +94,11 @@ public class DeawingCommandAppService implements AppService {
     }
 
     @Override
+    public void clearAll() {
+        appService.clearAll();
+    }
+
+    @Override
     public void close() {
         appService.close();
     }

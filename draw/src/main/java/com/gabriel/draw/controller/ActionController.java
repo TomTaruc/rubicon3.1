@@ -93,13 +93,17 @@ public class ActionController implements ActionListener {
     }
 
     private boolean canUndo() {
-        // This would need to be implemented in the command service
-        return true; // Placeholder
+        if (appService instanceof com.gabriel.draw.service.DeawingCommandAppService) {
+            return ((com.gabriel.draw.service.DeawingCommandAppService) appService).canUndo();
+        }
+        return false;
     }
 
     private boolean canRedo() {
-        // This would need to be implemented in the command service
-        return true; // Placeholder
+        if (appService instanceof com.gabriel.draw.service.DeawingCommandAppService) {
+            return ((com.gabriel.draw.service.DeawingCommandAppService) appService).canRedo();
+        }
+        return false;
     }
 
     @Override
@@ -136,7 +140,7 @@ public class ActionController implements ActionListener {
                         JOptionPane.YES_NO_OPTION
                 );
                 if (result == JOptionPane.YES_OPTION) {
-                    // Implementation would need to be added to AppService
+                    appService.clearAll();
                 }
                 break;
             case ActionCommand.EXIT:
