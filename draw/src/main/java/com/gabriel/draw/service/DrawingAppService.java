@@ -142,6 +142,7 @@ public class DrawingAppService implements AppService {
         }
     }
     
+    @Override
     public void clearAll() {
         drawing.getShapes().clear();
         repaint();
