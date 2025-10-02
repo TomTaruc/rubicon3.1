@@ -142,6 +142,9 @@ public class ActionController implements ActionListener {
             case ActionCommand.SELECT_NONE:
                 appService.setEditMode(EditMode.NONE);
                 break;
+            case ActionCommand.CLEAR_ALL:
+                appService.clearAll();
+                break;
             case ActionCommand.EXIT:
                 appService.close();
                 break;

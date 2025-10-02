@@ -139,6 +139,21 @@ public class DeawingCommandAppService implements AppService {
     public void repaint() {
         appService.repaint();
     }
+
+    @Override
+    public void clearAll() {
+        appService.clearAll();
+    }
+
+    @Override
+    public void setSelectedShape(Shape shape) {
+        appService.setSelectedShape(shape);
+    }
+
+    @Override
+    public Shape getSelectedShape() {
+        return appService.getSelectedShape();
+    }
     
     public boolean canUndo() {
         return CommandService.canUndo();
