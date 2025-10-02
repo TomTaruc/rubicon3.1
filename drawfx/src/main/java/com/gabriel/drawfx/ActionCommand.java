@@ -11,4 +11,5 @@ public class ActionCommand {
     public static final String SELECT_MOVE = "select_move";
     public static final String SELECT_SCALE = "select_scale";
     public static final String SELECT_NONE = "select_none";
+    public static final String CLEAR_ALL = "clear_all";
 }

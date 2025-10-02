@@ -21,9 +21,9 @@ args = "Drawing Application"
 name = "Drawing Application"
 author = "agent"
 
+[workflows.workflow.metadata]
+outputType = "vnc"
+
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd draw && mvn exec:java -Dexec.mainClass=\"com.gabriel.draw.Main\""
-
-[workflows.workflow.metadata]
-outputType = "vnc"

@@ -30,6 +30,7 @@ public class DrawingController implements MouseListener, MouseMotionListener {
     private Point dragOffset;
     private final AppService appService;
     private final ActionController actionController;
+    private EditMode currentEditMode;
 
     public DrawingController(AppService appService, DrawingView drawingView, ActionController actionController) {
         this.appService = appService;
@@ -41,14 +42,12 @@ public class DrawingController implements MouseListener, MouseMotionListener {
     
     @Override
     public void mouseClicked(MouseEvent e) {
-        // Handle Shift+Click for shape creation
         if (e.isShiftDown()) {
             createShapeAtPoint(e.getPoint());
         }
     }
     
     private void createShapeAtPoint(Point point) {
-        // Create a small shape at the clicked point
         Point endPoint = new Point(point.x + 50, point.y + 50);
         
         switch (appService.getShapeMode()) {
@@ -72,32 +71,35 @@ public class DrawingController implements MouseListener, MouseMotionListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        EditMode editMode = appService.getEditMode();
         Point clickPoint = e.getPoint();
-
-        if (editMode == EditMode.MOVE || editMode == EditMode.SCALE) {
-            Drawing drawing = (Drawing) appService.getModel();
-            List<Shape> shapes = drawing.getShapes();
-            SearchService searchService = appService.getSearchService();
-
-            selectedShape = searchService.findShapeAtPoint(shapes, clickPoint);
-
-            if (selectedShape != null) {
-                if (editMode == EditMode.MOVE) {
-                    Point shapeLocation = selectedShape.getLocation();
-                    dragOffset = new Point(clickPoint.x - shapeLocation.x, clickPoint.y - shapeLocation.y);
-                } else if (editMode == EditMode.SCALE) {
-                    ScalerService scalerService = appService.getScalerService();
-                    selectedAnchor = searchService.findScaleAnchor(
-                        selectedShape,
-                        clickPoint,
-                        scalerService.getAnchorSearchRadius()
-                    );
-                }
+        Drawing drawing = (Drawing) appService.getModel();
+        List<Shape> shapes = drawing.getShapes();
+        SearchService searchService = appService.getSearchService();
+        ScalerService scalerService = appService.getScalerService();
+        
+        Shape clickedShape = searchService.findShapeAtPoint(shapes, clickPoint);
+        
+        if (clickedShape != null) {
+            appService.setSelectedShape(clickedShape);
+            
+            int anchorIndex = searchService.findScaleAnchor(
+                clickedShape,
+                clickPoint,
+                scalerService.getAnchorSearchRadius()
+            );
+            
+            selectedShape = clickedShape;
+            selectedAnchor = anchorIndex;
+            
+            if (anchorIndex < 0) {
+                Point shapeLocation = clickedShape.getLocation();
+                dragOffset = new Point(clickPoint.x - shapeLocation.x, clickPoint.y - shapeLocation.y);
             }
             return;
         }
-
+        
+        appService.setSelectedShape(null);
+        
         if (appService.getDrawMode() == DrawMode.Idle && !e.isShiftDown()) {
             startPoint = e.getPoint();
 
@@ -123,13 +125,19 @@ public class DrawingController implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (selectedShape != null) {
+        if (selectedShape != null && currentEditMode != null) {
             selectedShape = null;
             selectedAnchor = -1;
             dragOffset = null;
+            currentEditMode = null;
             appService.repaint();
             return;
         }
+
+        selectedShape = null;
+        selectedAnchor = -1;
+        dragOffset = null;
+        currentEditMode = null;
 
         if (appService.getDrawMode() == DrawMode.MousePressed && !e.isShiftDown()) {
             endPoint = e.getPoint();
@@ -147,7 +155,6 @@ public class DrawingController implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        // Update cursor based on current mode
         updateCursor();
     }
 
@@ -158,21 +165,22 @@ public class DrawingController implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        EditMode editMode = appService.getEditMode();
         Point currentPoint = e.getPoint();
 
-        if (selectedShape != null && editMode == EditMode.MOVE) {
-            Point newLocation = new Point(currentPoint.x - dragOffset.x, currentPoint.y - dragOffset.y);
-            appService.move(selectedShape, newLocation);
-            appService.repaint();
-            return;
-        }
-
-        if (selectedShape != null && editMode == EditMode.SCALE && selectedAnchor >= 0) {
-            ScalerService scalerService = appService.getScalerService();
-            scalerService.scaleByAnchor(selectedShape, selectedAnchor, currentPoint, ScalingMode.DIRECTIONAL);
-            appService.repaint();
-            return;
+        if (selectedShape != null) {
+            if (selectedAnchor >= 0) {
+                currentEditMode = EditMode.SCALE;
+                ScalerService scalerService = appService.getScalerService();
+                scalerService.scaleByAnchor(selectedShape, selectedAnchor, currentPoint, ScalingMode.DIRECTIONAL);
+                appService.repaint();
+                return;
+            } else if (dragOffset != null) {
+                currentEditMode = EditMode.MOVE;
+                Point newLocation = new Point(currentPoint.x - dragOffset.x, currentPoint.y - dragOffset.y);
+                appService.move(selectedShape, newLocation);
+                appService.repaint();
+                return;
+            }
         }
 
         if (appService.getDrawMode() == DrawMode.MousePressed && !e.isShiftDown()) {
@@ -186,7 +194,6 @@ public class DrawingController implements MouseListener, MouseMotionListener {
     @Override
     public void mouseMoved(MouseEvent e) {
         updateCursor();
-        // Could show coordinates in status bar here
     }
     
     private void updateCursor() {
@@ -203,19 +210,5 @@ public class DrawingController implements MouseListener, MouseMotionListener {
                 cursor = Cursor.getDefaultCursor();
         }
         drawingView.setCursor(cursor);
-    }
-    
-    private void updateStatusInfo() {
-        if (startPoint != null && endPoint != null) {
-            int width = Math.abs(endPoint.x - startPoint.x);
-            int height = Math.abs(endPoint.y - startPoint.y);
-            
-            // This could be displayed in a status bar
-            String info = String.format("Size: %dx%d, Start: (%d,%d), End: (%d,%d)", 
-                width, height, startPoint.x, startPoint.y, endPoint.x, endPoint.y);
-            
-            // For now, set as tooltip (in a real app, this would go to a status bar)
-            drawingView.setToolTipText(info);
-        }
     }
 }
