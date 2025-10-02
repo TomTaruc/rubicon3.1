@@ -1,12 +1,23 @@
 # Drawing Application
 
 ## Overview
-This is a Java Swing-based drawing application that allows users to create shapes (lines, rectangles, ellipses) with mouse interactions. The application features undo/redo functionality and shape management capabilities.
+This is a Java Swing-based drawing application that allows users to create shapes (lines, rectangles, ellipses) with intuitive mouse interactions. The application features automatic selection, visual transformation handles, move/scale operations, and undo/redo functionality.
 
 ## Recent Changes (October 2, 2025)
-Successfully set up for Replit environment:
 
-### Setup Completed
+### Enhanced Selection & Transformation Features
+1. **Automatic Selection**: Click any shape to automatically select it and display visual handles
+2. **Visual Handles**: Selected shapes display transformation handles:
+   - Lines: 2 handles at endpoints
+   - Rectangles/Ellipses: 8 handles at corners and midpoints
+3. **Intelligent Mode Detection**:
+   - Click on a handle → automatic SCALE mode
+   - Click on shape body → automatic MOVE mode
+   - Click empty space → deselect and draw new shapes
+4. **Click/Drag Separation**: Selection persists on simple clicks; transformations only activate during actual drag operations
+5. **Simplified Menu Bar**: Streamlined to File/Edit/Draw/Properties structure
+
+### Initial Setup
 1. **Java Environment**: Installed Java (GraalVM) for project
 2. **Maven Build**: Fixed compilation issues by adding missing CLEAR_ALL constant to ActionCommand
 3. **Dependencies**: Removed duplicate dependency in draw/pom.xml
@@ -14,10 +25,13 @@ Successfully set up for Replit environment:
 5. **Workflow Configuration**: Configured VNC workflow to run the GUI application
 6. **Git Ignore**: Verified comprehensive .gitignore for Java/Maven projects
 
-### Technical Fixes Applied
-- Added `CLEAR_ALL` constant to `drawfx/src/main/java/com/gabriel/drawfx/ActionCommand.java`
-- Removed duplicate `drawfx` dependency from `draw/pom.xml`
-- Configured workflow with VNC output for GUI display
+### Technical Implementation Details
+- Added selection state tracking to Shape class with `isSelected()` and `isLine()` methods
+- Implemented deferred mode switching: EditMode (MOVE/SCALE) is only set during mouseDragged, not mousePressed
+- SearchService detects proximity to handles vs shape body to determine transformation intent
+- mousePressed records hit-testing data and delegates selection to AppService
+- mouseReleased preserves selection when no drag occurred
+- Handle rendering: 6x6 pixel squares at anchor points, drawn in black with white fill
 
 ## Project Architecture
 - **Root Module**: `rubicon` - Multi-module Maven project
@@ -30,8 +44,19 @@ Successfully set up for Replit environment:
 - `DrawingAppService`: Core application service for drawing operations
 - `DeawingCommandAppService`: Command wrapper service with undo/redo capabilities
 - `DrawingView`: Main drawing canvas with real-time preview
+- `DrawingController`: Mouse event handler with automatic mode detection
 - `DrawingToolBar`: Toolbar with shape tools and actions
-- `DrawingMenuBar`: Menu bar with file and edit operations
+- `DrawingMenuBar`: Simplified menu bar (File/Edit/Draw/Properties)
+- Renderer Services: `LineRendererService`, `RectangleRendererService`, `EllipseRenderer` - Draw shapes and selection handles
+
+## User Interactions
+- **Create Shape**: Click and drag on empty canvas
+- **Select Shape**: Click on any shape to select it and display handles
+- **Move Shape**: Click and drag the body of a selected shape
+- **Scale Shape**: Click and drag any handle of a selected shape
+- **Deselect**: Click on empty canvas
+- **Quick Shape**: Shift+Click to create default-sized shape at cursor
+- **Undo/Redo**: Use Edit menu or toolbar buttons
 
 ## Build & Run
 - **Java Version**: Java 17 (GraalVM)
@@ -40,9 +65,10 @@ Successfully set up for Replit environment:
 - **Output**: VNC application for GUI display in Replit environment
 
 ## Current Status
-✅ Application successfully imported to Replit
-✅ All dependencies resolved
-✅ Maven build successful (all 3 modules)
-✅ Workflow configured with VNC output
-✅ .gitignore properly configured for Java/Maven projects
+✅ Application successfully enhanced with selection and transformation features
+✅ All transformation workflows tested and verified
+✅ Automatic mode detection working correctly
+✅ Visual handles rendering properly for all shape types
+✅ Click/drag separation prevents spurious shapes and preserves selection
+✅ Menu bar simplified to File/Edit/Draw/Properties structure
 ✅ Ready to use in Replit environment
