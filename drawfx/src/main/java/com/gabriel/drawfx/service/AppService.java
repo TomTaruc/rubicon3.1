@@ -1,6 +1,7 @@
 package com.gabriel.drawfx.service;
 
 import com.gabriel.drawfx.DrawMode;
+import com.gabriel.drawfx.EditMode;
 import com.gabriel.drawfx.ShapeMode;
 import com.gabriel.drawfx.model.Shape;
 
@@ -17,6 +18,9 @@ public interface AppService {
     DrawMode getDrawMode();
     void setDrawMode(DrawMode drawMode);
 
+    EditMode getEditMode();
+    void setEditMode(EditMode editMode);
+
     Color getColor();
     void setColor(Color color);
 
@@ -28,8 +32,10 @@ public interface AppService {
 
     void create(Shape shape);
     void delete(Shape shape);
-    void clearAll();
     void close();
+
+    SearchService getSearchService();
+    ScalerService getScalerService();
 
     Object getModel();
     JPanel getView();

@@ -7,7 +7,8 @@ public class ActionCommand {
     public static final String LINE = "line";
     public static final String ELLIPSE = "ellipse";
     public static final String SET_COLOR = "setcolor";
-    public static final String CLEAR_ALL = "clearall";
     public static final String EXIT = "exit";
-    public static final String ABOUT = "about";
+    public static final String SELECT_MOVE = "select_move";
+    public static final String SELECT_SCALE = "select_scale";
+    public static final String SELECT_NONE = "select_none";
 }

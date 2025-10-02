@@ -16,16 +16,6 @@ public class DrawingMenuBar extends JMenuBar {
         JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic(KeyEvent.VK_F);
         
-        JMenuItem clearAllMenuItem = new JMenuItem("Clear All");
-        clearAllMenuItem.setActionCommand(ActionCommand.CLEAR_ALL);
-        clearAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
-        clearAllMenuItem.addActionListener(actionController);
-        clearAllMenuItem.setToolTipText("Clear all shapes from the canvas");
-        actionController.registerMenuItem(clearAllMenuItem);
-        fileMenu.add(clearAllMenuItem);
-        
-        fileMenu.addSeparator();
-        
         JMenuItem exitMenuItem = new JMenuItem("Exit");
         exitMenuItem.setActionCommand(ActionCommand.EXIT);
         exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_DOWN_MASK));
@@ -39,7 +29,7 @@ public class DrawingMenuBar extends JMenuBar {
         // Edit Menu
         JMenu editMenu = new JMenu("Edit");
         editMenu.setMnemonic(KeyEvent.VK_E);
-        
+
         JMenuItem undoMenuItem = new JMenuItem("Undo");
         undoMenuItem.setActionCommand(ActionCommand.UNDO);
         undoMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK));
@@ -47,7 +37,7 @@ public class DrawingMenuBar extends JMenuBar {
         undoMenuItem.setToolTipText("Undo the last action");
         actionController.registerMenuItem(undoMenuItem);
         editMenu.add(undoMenuItem);
-        
+
         JMenuItem redoMenuItem = new JMenuItem("Redo");
         redoMenuItem.setActionCommand(ActionCommand.REDO);
         redoMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
@@ -55,7 +45,33 @@ public class DrawingMenuBar extends JMenuBar {
         redoMenuItem.setToolTipText("Redo the last undone action");
         actionController.registerMenuItem(redoMenuItem);
         editMenu.add(redoMenuItem);
-        
+
+        editMenu.addSeparator();
+
+        JMenuItem selectMoveMenuItem = new JMenuItem("Select → Move");
+        selectMoveMenuItem.setActionCommand(ActionCommand.SELECT_MOVE);
+        selectMoveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.CTRL_DOWN_MASK));
+        selectMoveMenuItem.addActionListener(actionController);
+        selectMoveMenuItem.setToolTipText("Select and move objects");
+        actionController.registerMenuItem(selectMoveMenuItem);
+        editMenu.add(selectMoveMenuItem);
+
+        JMenuItem selectScaleMenuItem = new JMenuItem("Select → Scale");
+        selectScaleMenuItem.setActionCommand(ActionCommand.SELECT_SCALE);
+        selectScaleMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
+        selectScaleMenuItem.addActionListener(actionController);
+        selectScaleMenuItem.setToolTipText("Select and scale objects");
+        actionController.registerMenuItem(selectScaleMenuItem);
+        editMenu.add(selectScaleMenuItem);
+
+        JMenuItem selectNoneMenuItem = new JMenuItem("Select → None");
+        selectNoneMenuItem.setActionCommand(ActionCommand.SELECT_NONE);
+        selectNoneMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
+        selectNoneMenuItem.addActionListener(actionController);
+        selectNoneMenuItem.setToolTipText("Deselect all");
+        actionController.registerMenuItem(selectNoneMenuItem);
+        editMenu.add(selectNoneMenuItem);
+
         add(editMenu);
         
         // Draw Menu
@@ -108,18 +124,5 @@ public class DrawingMenuBar extends JMenuBar {
         propMenu.add(colorMenuItem);
         
         add(propMenu);
-        
-        // Help Menu
-        JMenu helpMenu = new JMenu("Help");
-        helpMenu.setMnemonic(KeyEvent.VK_H);
-        
-        JMenuItem aboutMenuItem = new JMenuItem("About");
-        aboutMenuItem.setActionCommand(ActionCommand.ABOUT);
-        aboutMenuItem.addActionListener(actionController);
-        aboutMenuItem.setToolTipText("About this application");
-        actionController.registerMenuItem(aboutMenuItem);
-        helpMenu.add(aboutMenuItem);
-        
-        add(helpMenu);
     }
 }

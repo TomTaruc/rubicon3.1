@@ -1,6 +1,7 @@
 package com.gabriel.draw.controller;
 
 import com.gabriel.drawfx.ActionCommand;
+import com.gabriel.drawfx.EditMode;
 import com.gabriel.drawfx.ShapeMode;
 import com.gabriel.drawfx.service.AppService;
 
@@ -132,27 +133,17 @@ public class ActionController implements ActionListener {
                     appService.setColor(color);
                 }
                 break;
-            case ActionCommand.CLEAR_ALL:
-                int result = JOptionPane.showConfirmDialog(
-                        null,
-                        "Are you sure you want to clear all shapes?",
-                        "Clear All",
-                        JOptionPane.YES_NO_OPTION
-                );
-                if (result == JOptionPane.YES_OPTION) {
-                    appService.clearAll();
-                }
+            case ActionCommand.SELECT_MOVE:
+                appService.setEditMode(EditMode.MOVE);
+                break;
+            case ActionCommand.SELECT_SCALE:
+                appService.setEditMode(EditMode.SCALE);
+                break;
+            case ActionCommand.SELECT_NONE:
+                appService.setEditMode(EditMode.NONE);
                 break;
             case ActionCommand.EXIT:
                 appService.close();
-                break;
-            case ActionCommand.ABOUT:
-                JOptionPane.showMessageDialog(
-                        null,
-                        "Drawing Application v1.0\nA simple drawing tool with shapes and colors.",
-                        "About",
-                        JOptionPane.INFORMATION_MESSAGE
-                );
                 break;
         }
 

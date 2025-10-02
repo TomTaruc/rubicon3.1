@@ -1,6 +1,7 @@
 package com.gabriel.drawfx.model;
 
 import com.gabriel.drawfx.DrawMode;
+import com.gabriel.drawfx.EditMode;
 import com.gabriel.drawfx.ShapeMode;
 import lombok.Data;
 
@@ -14,6 +15,7 @@ public class Drawing {
     private Color fill;
     private ShapeMode shapeMode = ShapeMode.Rectangle;
     private DrawMode drawMode = DrawMode.Idle;
+    private EditMode editMode = EditMode.NONE;
     private List<Shape> shapes;
     private List<Shape> selectedShapes;
 
