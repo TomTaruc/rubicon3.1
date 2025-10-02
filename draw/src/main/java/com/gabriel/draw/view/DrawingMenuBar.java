@@ -41,15 +41,6 @@ public class DrawingMenuBar extends JMenuBar {
         actionController.registerMenuItem(redoMenuItem);
         editMenu.add(redoMenuItem);
 
-        editMenu.addSeparator();
-
-        JMenuItem clearAllMenuItem = new JMenuItem("Clear All");
-        clearAllMenuItem.setActionCommand(ActionCommand.CLEAR_ALL);
-        clearAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, InputEvent.CTRL_DOWN_MASK));
-        clearAllMenuItem.addActionListener(actionController);
-        actionController.registerMenuItem(clearAllMenuItem);
-        editMenu.add(clearAllMenuItem);
-
         add(editMenu);
         
         JMenu drawMenu = new JMenu("Draw");

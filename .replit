@@ -26,4 +26,4 @@ outputType = "vnc"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd draw && mvn exec:java -Dexec.mainClass=\"com.gabriel.draw.Main\""
+args = "mvn clean install -q && cd draw && mvn exec:java -Dexec.mainClass=\"com.gabriel.draw.Main\""
