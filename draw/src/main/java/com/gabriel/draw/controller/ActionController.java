@@ -56,6 +56,9 @@ public class ActionController implements ActionListener {
 
         // Update shape mode selection
         updateShapeModeSelection();
+        
+        // Update edit mode selection
+        updateEditModeSelection();
     }
 
     private void updateShapeModeSelection() {
@@ -79,6 +82,19 @@ public class ActionController implements ActionListener {
             }
         }
     }
+    
+    private void updateEditModeSelection() {
+        EditMode currentEditMode = appService.getEditMode();
+
+        for (JMenuItem item : menuItems) {
+            String command = item.getActionCommand();
+            if (ActionCommand.SELECT_MOVE.equals(command) ||
+                    ActionCommand.SELECT_SCALE.equals(command) ||
+                    ActionCommand.SELECT_NONE.equals(command)) {
+                item.setSelected(isCurrentEditMode(command, currentEditMode));
+            }
+        }
+    }
 
     private boolean isCurrentShapeMode(String command, ShapeMode currentMode) {
         switch (command) {
@@ -88,6 +104,19 @@ public class ActionController implements ActionListener {
                 return currentMode == ShapeMode.Rectangle;
             case ActionCommand.ELLIPSE:
                 return currentMode == ShapeMode.Ellipse;
+            default:
+                return false;
+        }
+    }
+    
+    private boolean isCurrentEditMode(String command, EditMode currentEditMode) {
+        switch (command) {
+            case ActionCommand.SELECT_MOVE:
+                return currentEditMode == EditMode.MOVE;
+            case ActionCommand.SELECT_SCALE:
+                return currentEditMode == EditMode.SCALE;
+            case ActionCommand.SELECT_NONE:
+                return currentEditMode == EditMode.NONE;
             default:
                 return false;
         }

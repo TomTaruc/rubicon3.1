@@ -41,6 +41,36 @@ public class DrawingMenuBar extends JMenuBar {
         actionController.registerMenuItem(redoMenuItem);
         editMenu.add(redoMenuItem);
 
+        editMenu.addSeparator();
+
+        JMenu selectMenu = new JMenu("Select");
+        
+        JRadioButtonMenuItem selectMoveMenuItem = new JRadioButtonMenuItem("Move");
+        selectMoveMenuItem.setActionCommand(ActionCommand.SELECT_MOVE);
+        selectMoveMenuItem.addActionListener(actionController);
+        actionController.registerMenuItem(selectMoveMenuItem);
+        selectMenu.add(selectMoveMenuItem);
+
+        JRadioButtonMenuItem selectScaleMenuItem = new JRadioButtonMenuItem("Scale");
+        selectScaleMenuItem.setActionCommand(ActionCommand.SELECT_SCALE);
+        selectScaleMenuItem.addActionListener(actionController);
+        actionController.registerMenuItem(selectScaleMenuItem);
+        selectMenu.add(selectScaleMenuItem);
+
+        JRadioButtonMenuItem selectNoneMenuItem = new JRadioButtonMenuItem("None");
+        selectNoneMenuItem.setActionCommand(ActionCommand.SELECT_NONE);
+        selectNoneMenuItem.addActionListener(actionController);
+        selectNoneMenuItem.setSelected(true);
+        actionController.registerMenuItem(selectNoneMenuItem);
+        selectMenu.add(selectNoneMenuItem);
+
+        ButtonGroup selectGroup = new ButtonGroup();
+        selectGroup.add(selectMoveMenuItem);
+        selectGroup.add(selectScaleMenuItem);
+        selectGroup.add(selectNoneMenuItem);
+
+        editMenu.add(selectMenu);
+
         add(editMenu);
         
         JMenu drawMenu = new JMenu("Draw");
