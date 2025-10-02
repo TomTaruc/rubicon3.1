@@ -11,15 +11,18 @@ This is a Java Swing-based drawing application that allows users to create shape
 3. **Build Command**: Updated to `mvn clean install -q && cd draw && mvn exec:java -Dexec.mainClass="com.gabriel.draw.Main"`
 4. **Edit Menu Enhancements**: Added Select submenu with Move/Scale/None options for manual edit mode control
 5. **UI State Management**: Enhanced ActionController to dynamically update undo/redo button states and edit mode selection
+6. **Manual Mode Control**: Fixed DrawingController to respect Edit menu mode selection - movement/scaling only occurs when explicitly enabled
 
 ### Enhanced Selection & Transformation Features
 1. **Automatic Selection**: Click any shape to automatically select it and display visual handles
 2. **Visual Handles**: Selected shapes display transformation handles:
-   - Lines: 2 handles at endpoints
+   - Lines: 2 blue square handles at endpoints
    - Rectangles/Ellipses: 8 handles at corners and midpoints
-3. **Intelligent Mode Detection**:
-   - Click on a handle → automatic SCALE mode
-   - Click on shape body → automatic MOVE mode
+3. **Manual Mode Control**:
+   - Use Edit → Select menu to choose Move, Scale, or None mode
+   - MOVE mode: Click and drag shape body to reposition
+   - SCALE mode: Click and drag handles to resize
+   - NONE mode (default): Click selects shapes without transformation
    - Click empty space → deselect and draw new shapes
 4. **Click/Drag Separation**: Selection persists on simple clicks; transformations only activate during actual drag operations
 5. **Simplified Menu Bar**: Streamlined to File/Edit/Draw/Properties structure
@@ -34,11 +37,14 @@ This is a Java Swing-based drawing application that allows users to create shape
 
 ### Technical Implementation Details
 - Added selection state tracking to Shape class with `isSelected()` and `isLine()` methods
-- Implemented deferred mode switching: EditMode (MOVE/SCALE) is only set during mouseDragged, not mousePressed
+- DrawingController checks AppService.getEditMode() before allowing move/scale operations
+- MOVE mode: Only allows movement when EditMode.MOVE is active AND shape body was clicked
+- SCALE mode: Only allows scaling when EditMode.SCALE is active AND handle was clicked
+- NONE mode: Clicking shapes only selects them without transformation
 - SearchService detects proximity to handles vs shape body to determine transformation intent
 - mousePressed records hit-testing data and delegates selection to AppService
 - mouseReleased preserves selection when no drag occurred
-- Handle rendering: 6x6 pixel squares at anchor points, drawn in black with white fill
+- Handle rendering: 6x6 pixel squares - blue fill with white outline for lines, black with white for rectangles/ellipses
 
 ## Project Architecture
 - **Root Module**: `rubicon` - Multi-module Maven project
