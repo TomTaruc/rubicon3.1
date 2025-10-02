@@ -1,0 +1,108 @@
+✅ Refactor & Feature Integration Plan
+🔧 1. Remove Unwanted Features
+Clear All:
+
+Locate and remove any clear() method calls from RenderService, DrawingController, or menu actions.
+
+Delete associated menu item and action listener.
+
+About & Help Menu Items:
+
+In the menu bar setup (likely in MainFrame or AppService), remove About and Help menu items and their listeners.
+
+🧩 2. Add/Edit Services and Modes
+✅ Add/Edit Services
+MoverService:
+
+Ensure MoverService is instantiated and injected into DrawingController or AppService.
+
+Use it to handle object movement during drag events.
+
+SearchService (in drawfx):
+
+Add SearchService to drawfx package.
+
+Integrate into DrawingController to locate objects by proximity or ID.
+
+ScalerService:
+
+Implement scaling logic with 8 anchor points (corners + edges).
+
+Add searchRadius to each corner for hit detection.
+
+✅ Add/Edit Modes
+EditMode:
+
+Enum: NONE, MOVE, SCALE
+
+Store current mode in AppService or DrawingController.
+
+ScalingMode:
+
+Define scaling behavior (uniform, directional).
+
+Integrate with ScalerService.
+
+🖱️ 3. Edit Menu Enhancements
+Add “Edit” Menu with “Select” Options:
+java
+JMenu editMenu = new JMenu("Edit");
+JMenuItem selectMove = new JMenuItem("Select → Move");
+JMenuItem selectScale = new JMenuItem("Select → Scale");
+JMenuItem selectNone = new JMenuItem("Select → None");
+
+selectMove.addActionListener(e -> appService.setEditMode(EditMode.MOVE));
+selectScale.addActionListener(e -> appService.setEditMode(EditMode.SCALE));
+selectNone.addActionListener(e -> appService.setEditMode(EditMode.NONE));
+
+editMenu.add(selectMove);
+editMenu.add(selectScale);
+editMenu.add(selectNone);
+menuBar.add(editMenu);
+🎨 4. DrawingController Enhancements
+Drag Behavior:
+
+If EditMode == MOVE: use MoverService to update position.
+
+If EditMode == SCALE: use ScalerService to resize object.
+
+If EditMode == NONE: ignore drag.
+
+Search Integration:
+
+Use SearchService to detect selected object on mouse press.
+
+Highlight or activate object based on proximity.
+
+AppService Integration:
+
+Centralize mode switching and service access.
+
+📁 5. Drawing Folder Logic
+Add logic to distinguish between drag and select:
+
+On mouse press: use SearchService to determine if object is under cursor.
+
+On drag: if object is selected, apply MoverService or ScalerService based on mode.
+
+🟦 6. Ellipse Width Fix
+In Ellipse class:
+
+Ensure start and end points are used to calculate width and height.
+
+Fix constructor or draw() method to respect width:
+
+java
+int width = Math.abs(end.x - start.x);
+int height = Math.abs(end.y - start.y);
+g.drawOval(start.x, start.y, width, height);
+🧠 Summary of Key Classes to Modify
+Class/File	Action Required
+RenderService.java	Remove clear()
+MainFrame.java or AppService.java	Remove About/Help, Add Edit Menu
+DrawingController.java	Add drag logic, integrate services
+MoverService.java	Ensure movement logic
+ScalerService.java	Add 8-point scaling with search radius
+SearchService.java	Add proximity detection
+Ellipse.java	Fix width calculation
+EditMode.java	Add enum states
