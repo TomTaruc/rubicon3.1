@@ -5,6 +5,11 @@ This is a Java Swing-based drawing application that allows users to create shape
 
 ## Recent Changes (October 2, 2025)
 
+### Replit Environment Setup & Refinements
+1. **VNC Workflow**: Configured workflow to build and run the GUI application in VNC
+2. **Menu Cleanup**: Removed "Clear All" menu item from Edit menu as requested
+3. **Build Command**: Updated to `mvn clean install -q && cd draw && mvn exec:java -Dexec.mainClass="com.gabriel.draw.Main"`
+
 ### Enhanced Selection & Transformation Features
 1. **Automatic Selection**: Click any shape to automatically select it and display visual handles
 2. **Visual Handles**: Selected shapes display transformation handles:
