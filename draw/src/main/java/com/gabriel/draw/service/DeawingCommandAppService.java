@@ -3,14 +3,11 @@ package com.gabriel.draw.service;
 import com.gabriel.draw.command.AddShapeCommand;
 import com.gabriel.draw.command.SetDrawModeCommand;
 import com.gabriel.drawfx.DrawMode;
-import com.gabriel.drawfx.EditMode;
 import com.gabriel.drawfx.ShapeMode;
 import com.gabriel.drawfx.command.Command;
 import com.gabriel.drawfx.command.CommandService;
 import com.gabriel.drawfx.model.Shape;
 import com.gabriel.drawfx.service.AppService;
-import com.gabriel.drawfx.service.ScalerService;
-import com.gabriel.drawfx.service.SearchService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -51,17 +48,8 @@ public class DeawingCommandAppService implements AppService {
 
     @Override
     public void setDrawMode(DrawMode drawMode) {
+        // Don't make draw mode changes undoable - call directly
         appService.setDrawMode(drawMode);
-    }
-
-    @Override
-    public EditMode getEditMode() {
-        return appService.getEditMode();
-    }
-
-    @Override
-    public void setEditMode(EditMode editMode) {
-        appService.setEditMode(editMode);
     }
 
     @Override
@@ -106,18 +94,13 @@ public class DeawingCommandAppService implements AppService {
     }
 
     @Override
+    public void clearAll() {
+        appService.clearAll();
+    }
+
+    @Override
     public void close() {
         appService.close();
-    }
-
-    @Override
-    public SearchService getSearchService() {
-        return appService.getSearchService();
-    }
-
-    @Override
-    public ScalerService getScalerService() {
-        return appService.getScalerService();
     }
 
     @Override
@@ -138,21 +121,6 @@ public class DeawingCommandAppService implements AppService {
     @Override
     public void repaint() {
         appService.repaint();
-    }
-
-    @Override
-    public void clearAll() {
-        appService.clearAll();
-    }
-
-    @Override
-    public void setSelectedShape(Shape shape) {
-        appService.setSelectedShape(shape);
-    }
-
-    @Override
-    public Shape getSelectedShape() {
-        return appService.getSelectedShape();
     }
     
     public boolean canUndo() {

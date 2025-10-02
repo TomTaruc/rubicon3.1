@@ -33,13 +33,9 @@ public interface AppService {
     void create(Shape shape);
     void delete(Shape shape);
     void close();
-    void clearAll();
 
     SearchService getSearchService();
     ScalerService getScalerService();
-
-    void setSelectedShape(Shape shape);
-    Shape getSelectedShape();
 
     Object getModel();
     JPanel getView();

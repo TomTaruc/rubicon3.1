@@ -12,14 +12,9 @@ public abstract class Shape {
     private Color color;
     private Color fill;
     private RendererService rendererService;
-    private boolean selected = false;
-    
     public Shape(Point location){
         this.setLocation(location);
         this.setEnd(location);
-    }
-    
-    public boolean isLine() {
-        return this.getClass().getSimpleName().equals("Line");
-    }
+  }
+
 }

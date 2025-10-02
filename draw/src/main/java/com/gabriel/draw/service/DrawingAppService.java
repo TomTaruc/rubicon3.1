@@ -169,31 +169,4 @@ public class DrawingAppService implements AppService {
     public ScalerService getScalerService() {
         return scalerService;
     }
-
-    @Override
-    public void setSelectedShape(Shape shape) {
-        for (Shape s : drawing.getShapes()) {
-            s.setSelected(false);
-        }
-        if (shape != null) {
-            shape.setSelected(true);
-        }
-        repaint();
-    }
-
-    @Override
-    public Shape getSelectedShape() {
-        for (Shape s : drawing.getShapes()) {
-            if (s.isSelected()) {
-                return s;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public void clearAll() {
-        drawing.getShapes().clear();
-        repaint();
-    }
 }
