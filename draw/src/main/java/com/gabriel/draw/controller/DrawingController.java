@@ -88,25 +88,33 @@ public class DrawingController implements MouseListener, MouseMotionListener {
         ScalerService scalerService = appService.getScalerService();
         
         Shape clickedShape = searchService.findShapeAtPoint(shapes, clickPoint);
-        
+
         if (clickedShape != null) {
             appService.setSelectedShape(clickedShape);
-            
-            int anchorIndex = searchService.findScaleAnchor(
-                clickedShape,
-                clickPoint,
-                scalerService.getAnchorSearchRadius()
-            );
-            
+
             selectedShape = clickedShape;
-            selectedAnchor = anchorIndex;
             shapeStartLocation = new Point(clickedShape.getLocation());
             shapeStartEnd = new Point(clickedShape.getEnd());
 
-            if (anchorIndex < 0) {
+            EditMode editMode = appService.getEditMode();
+
+            // In MOVE mode, don't check for anchors - always prepare for moving
+            if (editMode == EditMode.MOVE) {
                 Point shapeLocation = clickedShape.getLocation();
                 dragOffset = new Point(clickPoint.x - shapeLocation.x, clickPoint.y - shapeLocation.y);
+                selectedAnchor = -1;
+            } else if (editMode == EditMode.SCALE) {
+                // In SCALE mode, find the anchor for scaling
+                int anchorIndex = searchService.findScaleAnchor(
+                    clickedShape,
+                    clickPoint,
+                    scalerService.getAnchorSearchRadius()
+                );
+                selectedAnchor = anchorIndex;
+            } else {
+                selectedAnchor = -1;
             }
+
             return;
         }
         
@@ -150,7 +158,8 @@ public class DrawingController implements MouseListener, MouseMotionListener {
                     MoveShapeCommand moveCommand = new MoveShapeCommand(
                         appService, selectedShape, shapeStartLocation, finalLocation
                     );
-                    CommandService.ExecuteCommand(moveCommand);
+                    // Use RecordCommand since the move was already applied during drag
+                    CommandService.RecordCommand(moveCommand);
                     actionController.updateUIState();
                 }
             } else if (currentEditMode == EditMode.SCALE) {
@@ -159,7 +168,8 @@ public class DrawingController implements MouseListener, MouseMotionListener {
                     ScaleShapeCommand scaleCommand = new ScaleShapeCommand(
                         appService, selectedShape, shapeStartEnd, finalEnd
                     );
-                    CommandService.ExecuteCommand(scaleCommand);
+                    // Use RecordCommand since the scale was already applied during drag
+                    CommandService.RecordCommand(scaleCommand);
                     actionController.updateUIState();
                 }
             }
@@ -212,17 +222,23 @@ public class DrawingController implements MouseListener, MouseMotionListener {
         if (selectedShape != null) {
             EditMode editMode = appService.getEditMode();
 
-            if (editMode == EditMode.MOVE && dragOffset != null) {
-                currentEditMode = EditMode.MOVE;
-                Point newLocation = new Point(currentPoint.x - dragOffset.x, currentPoint.y - dragOffset.y);
-                appService.move(selectedShape, newLocation);
-                appService.repaint();
+            if (editMode == EditMode.MOVE) {
+                // Always move in MOVE mode regardless of anchor
+                if (dragOffset != null) {
+                    currentEditMode = EditMode.MOVE;
+                    Point newLocation = new Point(currentPoint.x - dragOffset.x, currentPoint.y - dragOffset.y);
+                    appService.move(selectedShape, newLocation);
+                    appService.repaint();
+                }
                 return;
-            } else if (editMode == EditMode.SCALE && selectedAnchor >= 0) {
-                currentEditMode = EditMode.SCALE;
-                ScalerService scalerService = appService.getScalerService();
-                scalerService.scaleByAnchor(selectedShape, selectedAnchor, currentPoint, ScalingMode.DIRECTIONAL);
-                appService.repaint();
+            } else if (editMode == EditMode.SCALE) {
+                // Only scale if we have a valid anchor
+                if (selectedAnchor >= 0) {
+                    currentEditMode = EditMode.SCALE;
+                    ScalerService scalerService = appService.getScalerService();
+                    scalerService.scaleByAnchor(selectedShape, selectedAnchor, currentPoint, ScalingMode.DIRECTIONAL);
+                    appService.repaint();
+                }
                 return;
             }
         }

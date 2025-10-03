@@ -12,6 +12,11 @@ public class CommandService {
         redoStack.clear(); // Clear redo stack when new command is executed
     }
 
+    public static void RecordCommand(Command command) {
+        undoStack.push(command);
+        redoStack.clear(); // Clear redo stack when new command is recorded
+    }
+
     public static boolean canUndo() {
         return !undoStack.empty();
     }
