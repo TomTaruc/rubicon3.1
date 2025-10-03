@@ -1,5 +1,7 @@
 package com.gabriel.draw.controller;
 
+import com.gabriel.draw.command.MoveShapeCommand;
+import com.gabriel.draw.command.ScaleShapeCommand;
 import com.gabriel.draw.model.Ellipse;
 import com.gabriel.draw.model.Line;
 import com.gabriel.draw.model.Rectangle;
@@ -8,6 +10,7 @@ import com.gabriel.drawfx.EditMode;
 import com.gabriel.drawfx.ScalingMode;
 import com.gabriel.drawfx.ShapeMode;
 import com.gabriel.draw.view.DrawingView;
+import com.gabriel.drawfx.command.CommandService;
 import com.gabriel.drawfx.service.AppService;
 import com.gabriel.drawfx.model.Drawing;
 import com.gabriel.drawfx.model.Shape;
@@ -28,6 +31,8 @@ public class DrawingController implements MouseListener, MouseMotionListener {
     private Shape selectedShape;
     private int selectedAnchor = -1;
     private Point dragOffset;
+    private Point shapeStartLocation;
+    private Point shapeStartEnd;
     private final AppService appService;
     private final ActionController actionController;
     private EditMode currentEditMode;
@@ -48,8 +53,13 @@ public class DrawingController implements MouseListener, MouseMotionListener {
     }
     
     private void createShapeAtPoint(Point point) {
+        // Prevent shape creation when in Move or Scale mode
+        if (appService.getEditMode() != EditMode.NONE) {
+            return;
+        }
+
         Point endPoint = new Point(point.x + 50, point.y + 50);
-        
+
         switch (appService.getShapeMode()) {
             case Line:
                 currentShape = new Line(point, endPoint);
@@ -63,7 +73,7 @@ public class DrawingController implements MouseListener, MouseMotionListener {
             default:
                 return;
         }
-        
+
         currentShape.setColor(appService.getColor());
         appService.create(currentShape);
         actionController.updateUIState();
@@ -90,7 +100,9 @@ public class DrawingController implements MouseListener, MouseMotionListener {
             
             selectedShape = clickedShape;
             selectedAnchor = anchorIndex;
-            
+            shapeStartLocation = new Point(clickedShape.getLocation());
+            shapeStartEnd = new Point(clickedShape.getEnd());
+
             if (anchorIndex < 0) {
                 Point shapeLocation = clickedShape.getLocation();
                 dragOffset = new Point(clickPoint.x - shapeLocation.x, clickPoint.y - shapeLocation.y);
@@ -99,7 +111,12 @@ public class DrawingController implements MouseListener, MouseMotionListener {
         }
         
         appService.setSelectedShape(null);
-        
+
+        // Prevent shape creation when in Move or Scale mode
+        if (appService.getEditMode() != EditMode.NONE) {
+            return;
+        }
+
         if (appService.getDrawMode() == DrawMode.Idle && !e.isShiftDown()) {
             startPoint = e.getPoint();
 
@@ -126,9 +143,32 @@ public class DrawingController implements MouseListener, MouseMotionListener {
     @Override
     public void mouseReleased(MouseEvent e) {
         if (selectedShape != null && currentEditMode != null) {
+            // Record the move or scale command for undo/redo
+            if (currentEditMode == EditMode.MOVE) {
+                Point finalLocation = new Point(selectedShape.getLocation());
+                if (!finalLocation.equals(shapeStartLocation)) {
+                    MoveShapeCommand moveCommand = new MoveShapeCommand(
+                        appService, selectedShape, shapeStartLocation, finalLocation
+                    );
+                    CommandService.ExecuteCommand(moveCommand);
+                    actionController.updateUIState();
+                }
+            } else if (currentEditMode == EditMode.SCALE) {
+                Point finalEnd = new Point(selectedShape.getEnd());
+                if (!finalEnd.equals(shapeStartEnd)) {
+                    ScaleShapeCommand scaleCommand = new ScaleShapeCommand(
+                        appService, selectedShape, shapeStartEnd, finalEnd
+                    );
+                    CommandService.ExecuteCommand(scaleCommand);
+                    actionController.updateUIState();
+                }
+            }
+
             selectedShape = null;
             selectedAnchor = -1;
             dragOffset = null;
+            shapeStartLocation = null;
+            shapeStartEnd = null;
             currentEditMode = null;
             appService.repaint();
             return;
@@ -137,6 +177,8 @@ public class DrawingController implements MouseListener, MouseMotionListener {
         selectedShape = null;
         selectedAnchor = -1;
         dragOffset = null;
+        shapeStartLocation = null;
+        shapeStartEnd = null;
         currentEditMode = null;
 
         if (appService.getDrawMode() == DrawMode.MousePressed && !e.isShiftDown()) {
