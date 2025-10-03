@@ -169,17 +169,17 @@ public class DrawingController implements MouseListener, MouseMotionListener {
 
         if (selectedShape != null) {
             EditMode editMode = appService.getEditMode();
-            
-            if (editMode == EditMode.SCALE && selectedAnchor >= 0) {
-                currentEditMode = EditMode.SCALE;
-                ScalerService scalerService = appService.getScalerService();
-                scalerService.scaleByAnchor(selectedShape, selectedAnchor, currentPoint, ScalingMode.DIRECTIONAL);
-                appService.repaint();
-                return;
-            } else if (editMode == EditMode.MOVE && dragOffset != null) {
+
+            if (editMode == EditMode.MOVE && dragOffset != null) {
                 currentEditMode = EditMode.MOVE;
                 Point newLocation = new Point(currentPoint.x - dragOffset.x, currentPoint.y - dragOffset.y);
                 appService.move(selectedShape, newLocation);
+                appService.repaint();
+                return;
+            } else if (editMode == EditMode.SCALE && selectedAnchor >= 0) {
+                currentEditMode = EditMode.SCALE;
+                ScalerService scalerService = appService.getScalerService();
+                scalerService.scaleByAnchor(selectedShape, selectedAnchor, currentPoint, ScalingMode.DIRECTIONAL);
                 appService.repaint();
                 return;
             }

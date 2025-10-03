@@ -11,6 +11,7 @@ public class DrawingMenuBar extends JMenuBar {
 
     public DrawingMenuBar(ActionController actionController) {
         super();
+        setBorderPainted(false);
         
         JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic(KeyEvent.VK_F);
